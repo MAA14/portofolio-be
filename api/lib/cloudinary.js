@@ -1,6 +1,5 @@
-import {
-    v2 as cloudinary
-} from 'cloudinary';
+const cloudinary = require('cloudinary').v2;
+const streamifier = require('streamifier');
 
 // Configuration
 cloudinary.config({
@@ -9,21 +8,20 @@ cloudinary.config({
     api_secret: 'TIQKich54ROX0miIG_b0YOtGhiU' // Click 'View API Keys' above to copy your API secret
 });
 
-async function uploadToCloudinary(fileUrl, public_id) {
-    // Upload an image
-    const uploadResult = await cloudinary.uploader
-        .upload(
-            fileUrl, {
+exports.uploadToCloudinary = (file, public_id) => {
+    return new Promise((resolve, reject) => {
+        let stream = cloudinary.uploader.upload_stream({
                 public_id: public_id,
+                resource_type: 'image',
+            },
+            (error, result) => {
+                if (result) {
+                    resolve(result);
+                } else {
+                    reject(error);
+                }
             }
-        )
-        .catch((error) => {
-            console.log(error);
-        });
-
-    return uploadResult;
-}
-
-export {
-    uploadToCloudinary
+        );
+        streamifier.createReadStream(file.buffer).pipe(stream); // ✅ handle buffer
+    });
 };

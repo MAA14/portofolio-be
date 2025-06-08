@@ -8,6 +8,8 @@ const {
     uploadToCloudinary
 } = require('./lib/cloudinary');
 
+const { db } = require('./lib/firebase');
+
 app.use(cors());
 app.use(express.json());
 
@@ -18,9 +20,10 @@ const upload = multer({
 });
 
 // ✅ Upload endpoint
-app.post('/upload', async (req, res) => {
-    const file = req.body.file;
-    const public_id = req.body.public_id;
+app.post('/comment/upload', upload.single('image'), async (req, res) => {
+    const file = req.file; // image file
+    const username = req.body.username;
+    const content = req.body.content;
 
     if (!file) {
         return res.status(400).json({
@@ -28,14 +31,32 @@ app.post('/upload', async (req, res) => {
         });
     }
 
+    // Upload image to Cloudinary
     try {
-        const result = await uploadToCloudinary(file, public_id);
-        res.status(200).json(result);
+        const result = await uploadToCloudinary(file, username); // return Object that has {securel_url} 
+
+        // Create a new document in Firestore
+        const comment = {
+            username: username,
+            content: content,
+            imgUrl: result.secure_url,
+        }
+        const docRef = await db.collection('comments').add(comment); // return Object but the real data is on docRef.data
+
+        // Get the latest comment
+        const latestComment = await db.collection('comments').doc(docRef.id).get();
+        res.status(200).json(latestComment.data());
+
     } catch (error) {
         res.status(500).json({
             error: error.message
         });
     }
+});
+
+app.get('/comments', async (req, res) => {
+    const comments = await db.collection('comments').get();
+    res.status(200).json(comments.docs.map(doc => doc.data()));
 });
 
 app.get('/', (req, res) => {
