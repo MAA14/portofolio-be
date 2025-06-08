@@ -5,24 +5,12 @@ import express from 'express';
 const app = express();
 import cors from 'cors';
 import multer from 'multer'; // ✅ ADD THIS
-import { uploadToCloudinary } from './lib/cloudinary';
-import { db } from './lib/firebase';
-
-app.use(cors({
-  origin: 'https://portofolio-2f158.web.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add more if needed
-  credentials: true
-}));
-
-app.options('*', cors());
-
-app.use((req, res, next) => {
-  console.log('CORS headers test!');
-  res.setHeader('Access-Control-Allow-Origin', 'https://portofolio-2f158.web.app');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
+import {
+    uploadToCloudinary
+} from './lib/cloudinary';
+import {
+    db
+} from './lib/firebase';
 
 app.use(express.json());
 
@@ -59,6 +47,7 @@ app.post('/comment/upload', upload.single('image'), async (req, res) => {
         // Get the latest comment
         const latestComment = await db.collection('comments').doc(docRef.id).get();
         res.status(200).json(latestComment.data());
+        res.setHeader('Access-Control-Allow-Origin', 'https://portofolio-2f158.web.app');
 
     } catch (error) {
         res.status(500).json({
@@ -70,6 +59,7 @@ app.post('/comment/upload', upload.single('image'), async (req, res) => {
 app.get('/comments', async (req, res) => {
     const comments = await db.collection('comments').get();
     res.status(200).json(comments.docs.map(doc => doc.data()));
+    res.setHeader('Access-Control-Allow-Origin', 'https://portofolio-2f158.web.app');
 });
 
 app.get('/', (req, res) => {

@@ -10,7 +10,7 @@ cloudinary.config({
     api_secret: 'TIQKich54ROX0miIG_b0YOtGhiU' // Click 'View API Keys' above to copy your API secret
 });
 
-exports.uploadToCloudinary = (file, public_id) => {
+const uploadToCloudinary = async (file, public_id) => {
     return new Promise((resolve, reject) => {
         let stream = cloudinary.uploader.upload_stream({
                 public_id: public_id,
@@ -26,4 +26,8 @@ exports.uploadToCloudinary = (file, public_id) => {
         );
         streamifier.createReadStream(file.buffer).pipe(stream); // ✅ handle buffer
     });
+};
+
+export {
+    uploadToCloudinary
 };
