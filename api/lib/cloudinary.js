@@ -1,5 +1,7 @@
-const cloudinary = require('cloudinary').v2;
-const streamifier = require('streamifier');
+import {
+    v2 as cloudinary
+} from 'cloudinary';
+import streamifier from 'streamifier';
 
 // Configuration
 cloudinary.config({

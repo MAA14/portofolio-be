@@ -1,14 +1,12 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
-const express = require('express');
+import express from 'express';
 const app = express();
-const cors = require('cors');
-const multer = require('multer'); // ✅ ADD THIS
-const {
-    uploadToCloudinary
-} = require('./lib/cloudinary');
-
-const { db } = require('./lib/firebase');
+import cors from 'cors';
+import multer from 'multer'; // ✅ ADD THIS
+import { uploadToCloudinary } from './lib/cloudinary';
+import { db } from './lib/firebase';
 
 app.use(cors({
   origin: 'https://portofolio-2f158.web.app',
