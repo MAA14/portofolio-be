@@ -10,7 +10,12 @@ const {
 
 const { db } = require('./lib/firebase');
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://portofolio-2f158.web.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add more if needed
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Setup multer to store files in memory
