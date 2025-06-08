@@ -19,7 +19,7 @@ const upload = multer({
 
 // ✅ Upload endpoint
 app.post('/upload', async (req, res) => {
-    const file = req.file;
+    const file = req.body.file;
     const public_id = req.body.public_id;
 
     if (!file) {
