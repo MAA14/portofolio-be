@@ -18,7 +18,7 @@ const upload = multer({
 });
 
 // ✅ Upload endpoint
-app.post('/upload', upload.single('image'), async (req, res) => {
+app.post('/upload', async (req, res) => {
     const file = req.file;
     const public_id = req.body.public_id;
 
